@@ -97,18 +97,48 @@ const icons = [
   },
 ];
 
-const main = document.querySelector("main");
+icons.forEach((icon) => {
+  icon.getClass = function () {
+    return this.family + " " + this.prefix + this.name;
+  };
+});
 
-icons.forEach(
-  (icon) =>
-    (icon.getClass = function () {
-      return this.family + " " + this.prefix + this.name;
-    })
-);
+const main = document.querySelector("main");
+const filter = document.querySelector("#select-category");
+filter.addEventListener("change", displaySelectedTypes);
 
 displayIconCards(icons);
+populateFilterOptions(icons);
+
+function populateFilterOptions(icons) {
+  const types = getIconTypes(icons);
+  displaySelectOptions(types);
+}
+
+function getIconTypes(icons) {
+  return icons.map((icon) => icon.type).reduce(deleteDoubles, []);
+}
+
+function deleteDoubles(accomulator, current) {
+  if (!accomulator.includes(current)) {
+    accomulator.push(current);
+  }
+  return accomulator;
+}
+
+function displaySelectOptions(types) {
+  types.forEach((type) => displayOption(type));
+}
+
+function displayOption(type) {
+  const option = document.createElement("option");
+  option.textContent = type;
+  option.value = type;
+  filter.append(option);
+}
 
 function displayIconCards(icons) {
+  main.textContent = "";
   getIconCardsArray(icons).forEach((icon) => main.append(icon));
 }
 
@@ -125,4 +155,14 @@ function getIconCard(icon) {
   name.textContent = icon.name;
   card.append(iconImage, name);
   return card;
+}
+
+function displaySelectedTypes() {
+  const iconsFittingSelection =
+    this.value === "all" ? icons : getFilteredIcons(this.value);
+  displayIconCards(iconsFittingSelection);
+}
+
+function getFilteredIcons(type) {
+  return icons.filter((icon) => icon.type === type);
 }

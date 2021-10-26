@@ -29,6 +29,10 @@ body {
   padding: 1rem;
 }
 
+#select-category {
+  text-transform: capitalize;
+}
+
 main {
   flex: 1 0 100%;
   background-color: #dddddd;
@@ -40,7 +44,7 @@ main {
 }
 
 .card {
-  padding: 1rem 2rem;
+  padding: 1.5rem 2rem;
   text-align: center;
   background-color: white;
   border-radius: 0.5rem;
