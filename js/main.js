@@ -96,9 +96,70 @@ const icons = [
     family: "fas",
   },
 ];
+const colors = ["#9AD5CA", "#ACDDE7", "#ADB9E3", "#A379C9", "#B744B8"];
 
-const page = new Page(icons);
+const types = getIconTypes(icons);
+icons.forEach((icon) => (icon.color = colors[types.indexOf(icon.type)]));
 
-page.select.addEventListener("change", function (e) {
-  page.displaySelectedTypes.call(page, e);
-});
+const main = document.querySelector("main");
+const select = document.querySelector("#select-category");
+
+populateSelectOptions(types);
+select.addEventListener("change", displaySelectedTypes);
+displaySelectedTypes.call(select);
+
+function getIconTypes(icons) {
+  return icons.map((icon) => icon.type).reduce(this.deleteDoubles, []);
+}
+
+function deleteDoubles(accumulator, current) {
+  if (!accumulator.includes(current)) {
+    accumulator.push(current);
+  }
+  return accumulator;
+}
+
+function populateSelectOptions(types) {
+  types.forEach((type) => displayOption(type));
+}
+
+function displayOption(type) {
+  const option = document.createElement("option");
+  option.textContent = type;
+  option.value = type;
+  select.append(option);
+}
+
+function displaySelectedTypes() {
+  const selectedIcons =
+    this.value === "all"
+      ? icons
+      : icons.filter((icon) => icon.type === this.value);
+  const cards = generateCards(selectedIcons);
+  displayInMain(cards);
+}
+
+function generateCards(selectedIcons) {
+  return selectedIcons.map((icon) => createCard(icon));
+}
+
+function createCard(icon) {
+  const card = document.createElement("div");
+  card.classList.add("card");
+  const iconImage = document.createElement("i");
+  iconImage.className = getCompleteFontAwesomeClass(icon);
+  iconImage.style.color = icon.color;
+  const name = document.createElement("div");
+  name.textContent = icon.name;
+  card.append(iconImage, name);
+  return card;
+}
+
+function getCompleteFontAwesomeClass(icon) {
+  return icon.family + " " + icon.prefix + icon.name;
+}
+
+function displayInMain(cards) {
+  main.textContent = "";
+  cards.forEach((card) => main.append(card));
+}
